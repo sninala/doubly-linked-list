@@ -57,8 +57,6 @@ class LinkedList {
             var node = this._head;
             var i = 0;
             while (i != index) {
-                console.log(i);
-                console.log(node.data);
                 node = node.next;
                 i++;
             }
