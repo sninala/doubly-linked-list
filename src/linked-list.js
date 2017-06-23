@@ -9,10 +9,10 @@ class LinkedList {
 
     append(data) {
         var node = new Node(data);
-        if(! this.length){
+        if (!this.length) {
             this._head = node;
             this._tail = node;
-        } else{
+        } else {
             this._tail.next = node;
             node.prev = this._tail;
             this._tail = node;
@@ -22,20 +22,19 @@ class LinkedList {
     }
 
     head() {
-        if(this._head){
+        if (this._head) {
             return this._head.data;
-        } else{
+        } else {
             return null
         }
     }
 
     tail() {
-        if(this._tail){
+        if (this._tail) {
             return this._tail.data;
-        } else{
+        } else {
             return null;
         }
-        
     }
 
     at(index) {
@@ -53,30 +52,47 @@ class LinkedList {
     }
 
     insertAt(index, data) {
-       if (index < this.length) {
-            var node = this._head;
-            var i = 0;
-            while (i != index) {
-                node = node.next;
-                i++;
-            }
-            var nodePrev = node.prev;
-            var nodeNext = node.next;
-           
-            var newNode = new Node(data);
-            newNode.prev = nodePrev;
-            newNode.next = nodeNext;
-            node.prev = newNode;
-            if(node.next){
-                node.next = node.next.next;
-            }else{
-                node.next = null;
-            }
-            
-            this.length++;
-            return this;
+
+        var newNode,
+            currentNode = this._head,
+            counter = 0,
+            errorMessage = 'Wrong index!';
+
+        if (index < 0 || index > this.length) {
+            throw new Error(errorMessage);
         }
-            
+        newNode = new Node(data)
+        if (index === 0) {
+            if (this.length) {
+                this._head = newNode;
+                this._head.next = currentNode;
+                currentNode.prev = this._head;
+
+            } else {
+                this._head = newNode;
+                this._tail = newNode;
+            }
+
+        } else if (index === this.length) {
+            currentNode = this._tail;
+            this._tail.next = newNode;
+            node.prev = currentNode;
+            this._tail = newNode;
+
+        } else {
+            while (counter < index) {
+                currentNode = currentNode.next;
+                counter++;
+            }
+
+            currentNode.prev.next = newNode;
+            currentNode.prev = newNode;
+            newNode.next = currentNode;
+            newNode.prev = currentNode.prev;
+        }
+
+        this.length++;
+        return this;
     }
 
     isEmpty() {
@@ -87,57 +103,59 @@ class LinkedList {
         this._head = null;
         this._tail = null;
         this.length = 0;
-    }
-
-    deleteAt(index) {
-        var node  = this._head;
-        var i = 0;
-        while (i != index) {
-            node  = node.next;
-            i++;
-        }
-        var nodeToDelete = node;
-        nodeToDelete.next.prev = nodeToDelete.prev;
-        nodeToDelete.prev.next = nodeToDelete.next;
-        this.length--;
-    }
-
-    reverse() {
-        var node_buf = {
-            value: null,
-            next: null,
-            prev: null,
-        }
-
-        var node_head = this._head;
-        var node_tail = this._tail;
-
-        var i = 0;
-
-        while (i < Math.floor(this.length / 2)) { 
-            node_buf.data = node_tail.data;
-            node_tail.data = node_head.data;
-            node_head.data = node_buf.data;
-            node_head = node_head.next;
-            node_tail = node_tail.prev;
-            i++;
-        }
-
         return this;
     }
 
-    indexOf(data) {
+    deleteAt(index) {
         var node = this._head;
         var i = 0;
+        if (this.length > 1 && index > 0 && index <= this.length) {
+            while (i < index) {
+                node = node.next;
+                i++;
+            }
+            var nodeToDelete = node;
+            nodeToDelete.prev.next = nodeToDelete.next;
+            nodeToDelete.next.prev = nodeToDelete.prev;
+            this.length--;
+        }
+        return this;
+    }
+
+    reverse() {
+        var currentNode = this._head,
+            tmp = null;
+
+        this._tail = this._head;
+
+        while (currentNode !== null) {
+            tmp = currentNode.next;
+            currentNode.next = currentNode.prev;
+            currentNode.prev = tmp;
+
+            if (currentNode.prev === null) {
+                this._head = currentNode;
+            }
+            currentNode = currentNode.prev;
+        }
+
+        return this;
+
+    }
+
+    indexOf(data) {
+        var node = this._head,
+            i = 0,
+            index = -1;
         while (i != this.length) {
             if (node.data == data) {
-                return i;
+                index = i;
+                break;
             }
             node = node.next;
             i++;
         }
-        return -1;
-        
+        return index;
     }
 }
 
